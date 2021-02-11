@@ -3,10 +3,10 @@ from django import forms
 from django.utils import timezone
 
 class PostForm(forms.Form):
-    
+
     class Meta:
         model = Post
-        fields = ('text')
+        fields = ('__all__')
 
     def publish(self):
         self.published_date = timezone.now()
