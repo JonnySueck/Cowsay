@@ -3,6 +3,7 @@ from django import forms
 from django.utils import timezone
 
 class PostForm(forms.Form):
+    
     class Meta:
         model = Post
         fields = ('text')
