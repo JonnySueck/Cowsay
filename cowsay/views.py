@@ -8,6 +8,9 @@ def index(request):
     form = PostNew.objects.all()
     return render(request, 'index.html', {'form': form})
 
+def history(request):
+    posts = PostNew.objects.all()
+    return render(request, 'history.html', {'posts': posts})
 
 def post_new(request):
     if request.method == 'POST':
