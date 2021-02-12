@@ -1,16 +1,6 @@
-from .models import Post
 from django import forms
-from django.utils import timezone
+from .models import Post
+
 
 class PostForm(forms.Form):
-
-    class Meta:
-        model = Post
-        fields = ('__all__')
-
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
-
-    def __str__(self):
-        return self.title
+    text = forms.CharField(max_length=100)
