@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponseRedirect, render
 
 # Create your views here.
 def history(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all()[:10]
     return render(request, 'history.html', {'posts': posts})
 
 def index_view(request):
