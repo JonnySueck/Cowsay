@@ -7,7 +7,11 @@ import subprocess
 
 # Create your views here.
 def history(request):
-    posts = Post.objects.all()[:10]
+    posts = Post.objects.all()
+    number_of_posts = len(posts)
+    last = number_of_posts
+    start = number_of_posts - 10
+    posts = Post.objects.all()[start:last]
     return render(request, 'history.html', {'posts': posts})
 
 def index_view(request):
