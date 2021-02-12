@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from .models import Post
 from .forms import PostForm
 from django.shortcuts import HttpResponseRedirect, render
-import subprocess, cowsay
+import subprocess
 
 # Create your views here.
 def history(request):
@@ -21,8 +21,10 @@ def index_view(request):
             )
             last_post = data['text']
             form = PostForm()
+            result = subprocess.run(['cowsay', f'{ last_post }'], capture_output=True)
+            results = result.stdout.decode()
             return render(request, 'index.html', {
-                'last_post': last_post,
+                'results': results,
                 'form': form})
 
     form = PostForm()
