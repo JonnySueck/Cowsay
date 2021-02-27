@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from cowsay.views import index_view, history
+from django.db import IntegrityError
 
 urlpatterns = [
     path('', index_view,  name='home'),

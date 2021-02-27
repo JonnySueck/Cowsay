@@ -1,8 +1,10 @@
-<h1>most recent posts:</h1>
+{% extends 'nav/base.html' %}
+
+{% block content %}
 <ul>
+    <h1>most recent posts:</h1>
     {% for item in posts %}
-    <li>
-        <p>{{ item }} </p>
-    </li>
-    {% endfor %}
+    <li>{{ item }}</li>
 </ul>
+{% endfor %}
+{% endblock %}
