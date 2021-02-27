@@ -14,6 +14,10 @@ def history(request):
     posts = Post.objects.all()[start:last]
     return render(request, 'history.html', {'posts': posts})
 
+
+def pick_cowsay(request):
+    ...
+
 def index_view(request):
     form = PostForm()
     if request.method == 'POST':
@@ -24,8 +28,18 @@ def index_view(request):
                 text = data['text']
             )
             last_post = data['text']
+            cowsay_type = data['cowsay_type']
             form = PostForm()
-            result = subprocess.run(['cowsay', f'{ last_post }'], capture_output=True)
+            if cowsay_type == 'Default':
+                result = subprocess.run(['cowsay', f'{ last_post }'], capture_output=True)
+            if cowsay_type == 'Tux':
+                result = subprocess.run(['cowsay', '-f', 'tux', f'{ last_post }'], capture_output=True)
+            if cowsay_type == 'Dragon':
+                result = subprocess.run(['cowsay', '-f', 'dragon', f'{ last_post }'], capture_output=True)
+            if cowsay_type == 'Kitty':
+                result = subprocess.run(['cowsay', '-f', 'kitty', f'{ last_post }'], capture_output=True)
+            if cowsay_type == 'Skeleton':
+                result = subprocess.run(['cowsay', '-f', 'skeleton', f'{ last_post }'], capture_output=True)
             results = result.stdout.decode()
             return render(request, 'index.html', {
                 'results': results,

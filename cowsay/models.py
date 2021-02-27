@@ -16,7 +16,10 @@ class Post(models.Model):
         (SKELETON, 'Skeleton'),
         ]
     text = models.CharField(max_length=100)
-    cowsay_type = models.CharField(max_length=11, choices=STATUS_CHOICES)
+    cowsay_type = models.CharField(
+        max_length=11,
+        choices=STATUS_CHOICES,
+        default=DEFAULT,)
     
     def __str__(self):
         return self.text
