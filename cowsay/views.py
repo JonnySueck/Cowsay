@@ -10,7 +10,10 @@ def history(request):
     posts = Post.objects.all()
     number_of_posts = len(posts)
     last = number_of_posts
-    start = number_of_posts - 10
+    if number_of_posts > 10:
+        start = number_of_posts - 10
+    else:
+        start = 0
     posts = Post.objects.all()[start:last]
     return render(request, 'history.html', {'posts': posts})
 
@@ -42,7 +45,8 @@ def index_view(request):
         if form.is_valid():
             data = form.cleaned_data
             Post.objects.create(
-                text = data['text']
+                text = data['text'],
+                cowsay_type = data['cowsay_type']
             )
             form = PostForm()
             result = pick_cowsay(request)
