@@ -1,5 +1,7 @@
 {% extends 'nav/base.html' %}
+<pre>
 {% block content %}
+<p>{{ welcome }}</p>
 <h3>Create a new post</h3>
 <form method="POST">
     {% csrf_token %}
@@ -8,6 +10,7 @@
     
 </form>
 <pre>
-{{ results }}
+    {{ results }}
 </pre>
 {% endblock %}
+</pre>

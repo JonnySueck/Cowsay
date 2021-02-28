@@ -1,4 +1,5 @@
 from typing import Text
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from .models import Post
 from .forms import PostForm
@@ -36,10 +37,24 @@ def pick_cowsay(request):
             if cowsay_type == 'Skeleton':
                 result = subprocess.run(['cowsay', '-f', 'skeleton', f'{ last_post }'], capture_output=True)
             return result
-            
+
+
+def set_cookies(request):
+    initial_welcome = subprocess.run(['cowsay', 'welcome'], capture_output=True)
+    welcome = initial_welcome.stdout.decode()
+    response = HttpResponse(f'{ welcome }')
+    response.set_cookie('program', f'{welcome}')
+    return response
+
+
+def get_cookie(request):
+    visit_number = request.COOKIES['program']
+    return HttpResponse('the visit number is' + visit_number)
+
 
 def index_view(request):
     form = PostForm()
+    set_cookies(request)
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -48,12 +63,16 @@ def index_view(request):
                 text = data['text'],
                 cowsay_type = data['cowsay_type']
             )
+            # get_cookie(request)
             form = PostForm()
             result = pick_cowsay(request)
             results = result.stdout.decode()
             return render(request, 'index.html', {
                 'results': results,
                 'form': form})
-
+                
+    get_cookie(request)
     form = PostForm()
-    return render(request, 'index.html', {'form': form})
+    return render(request, 'index.html', {
+        'form': form,
+        })

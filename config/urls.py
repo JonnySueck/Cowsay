@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from cowsay.views import index_view, history
-from django.db import IntegrityError
+from cowsay.views import index_view, history, set_cookies, get_cookie
 
 urlpatterns = [
     path('', index_view,  name='home'),
     path('history/', history, name='history'),
+    path('setcookie/', set_cookies, name='cookieset'),
+    path('getcookie/', get_cookie, name='cookieget'),
     path('admin/', admin.site.urls)
 ]
