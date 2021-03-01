@@ -41,7 +41,7 @@ def pick_cowsay(request):
 
 def setcookie(request):
     last_post = Post.objects.last()
-    html = HttpResponse("<h1>Dataflair Django Tutorial</h1>")
+    html = HttpResponse("<a href='/'>go home</a>")
     if request.COOKIES.get('visits'):
         html.set_cookie('dataflair', 'Welcome Back')
         value = request.COOKIES.get('visits')
@@ -87,15 +87,11 @@ def index_view(request):
                 )
                 form = PostForm()
                 result = pick_cowsay(request)
-                text = data['text']
                 setcookie(request)
                 results = result.stdout.decode()
                 response = HttpResponse('blah')
                 response.set_cookie('visits', f'{results}')
-                return render(request, 'index.html', {
-                        'results': results,
-                        'form': form,
-                        })
+                return HttpResponseRedirect('/setcookie/')
 
         form = PostForm()
         return render(request, 'index.html', {
