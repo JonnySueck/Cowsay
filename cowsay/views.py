@@ -41,7 +41,8 @@ def pick_cowsay(request):
 
 def setcookie(request):
     last_post = Post.objects.last()
-    html = HttpResponse("<a href='/'>go home</a>")
+    html = HttpResponse(
+        "Your post has successfully been submitted <a href='/'>go home</a>")
     if request.COOKIES.get('visits'):
         html.set_cookie('dataflair', 'Welcome Back')
         value = request.COOKIES.get('visits')
@@ -62,7 +63,8 @@ def showcookie(request):
         html.set_cookie('visits', value)
         return html
     else:
-        return redirect('/setcookie/')
+        return HttpResponseRedirect('/setcookie/')
+
 
 
 def index_view(request):
