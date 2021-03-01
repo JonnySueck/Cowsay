@@ -43,24 +43,21 @@ def setcookie(request):
     last_post = Post.objects.last()
     html = HttpResponse(
         "Your post has successfully been submitted <a href='/'>go home</a>")
-    if request.COOKIES.get('visits'):
-        html.set_cookie('dataflair', 'Welcome Back')
-        value = request.COOKIES.get('visits')
-        html.set_cookie('visits', last_post)
+    if request.COOKIES.get('lastpost'):
+        value = request.COOKIES.get('lastpost')
+        html.set_cookie('lastpost', last_post)
     else:
-        value = 'welcome'
         text = "Welcome for the first time"
-        html.set_cookie('visits', text)
-        html.set_cookie('dataflair', text)
+        html.set_cookie('lastpost', text)
     return html
 
 
 def showcookie(request):
-    if request.COOKIES.get('visits') is not None:
-        value = request.COOKIES.get('visits')
+    if request.COOKIES.get('lastpost') is not None:
+        value = request.COOKIES.get('lastpost')
         text = request.COOKIES.get('dataflair')
         html = HttpResponse("<center><h1>{0}<br>You have requested this page {1} times</h1></center>".format(text, value))
-        html.set_cookie('visits', value)
+        html.set_cookie('lastpost', value)
         return html
     else:
         return HttpResponseRedirect('/setcookie/')
@@ -70,8 +67,8 @@ def showcookie(request):
 def index_view(request):
     form = PostForm()
     showcookie(request)
-    if request.COOKIES['visits'] != None:
-        show = request.COOKIES['visits']
+    if request.COOKIES['lastpost'] != None:
+        show = request.COOKIES['lastpost']
         shows = subprocess.run(['cowsay', f'{ show }'], capture_output=True)
         results = shows.stdout.decode()
 
@@ -92,7 +89,7 @@ def index_view(request):
                 setcookie(request)
                 results = result.stdout.decode()
                 response = HttpResponse('blah')
-                response.set_cookie('visits', f'{results}')
+                response.set_cookie('lastpost', f'{results}')
                 return HttpResponseRedirect('/setcookie/')
 
         form = PostForm()
