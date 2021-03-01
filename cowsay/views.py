@@ -1,5 +1,5 @@
 from typing import Text
-from django.http import HttpResponse
+from django.http import HttpResponse, response
 from django.shortcuts import redirect, render
 from .models import Post
 from .forms import PostForm
@@ -39,40 +39,59 @@ def pick_cowsay(request):
             return result
 
 
-def set_cookies(request):
-    initial_welcome = subprocess.run(['cowsay', 'welcome'], capture_output=True)
-    welcome = initial_welcome.stdout.decode()
-    response = HttpResponse(f'{ welcome }')
-    response.set_cookie('program', f'{welcome}')
-    return response
+def setcookie(request):
+    html = HttpResponse("<h1>Dataflair Django Tutorial</h1>")
+    if request.COOKIES.get('visits'):
+        html.set_cookie('dataflair', 'Welcome Back')
+        value = int(request.COOKIES.get('visits'))
+        html.set_cookie('visits', value + 1)
+    else:
+        value = 1
+        text = "Welcome for the first time"
+        html.set_cookie('visits', value)
+        html.set_cookie('dataflair', text)
+    return html
 
 
-def get_cookie(request):
-    visit_number = request.COOKIES['program']
-    return HttpResponse('the visit number is' + visit_number)
+def showcookie(request):
+    if request.COOKIES.get('visits') is not None:
+        value = request.COOKIES.get('visits')
+        text = request.COOKIES.get('dataflair')
+        html = HttpResponse("<center><h1>{0}<br>You have requested this page {1} times</h1></center>".format(text, value))
+        html.set_cookie('visits', int(value) + 1)
+        return html
+    else:
+        return redirect('/setcookie')
 
 
 def index_view(request):
     form = PostForm()
-    set_cookies(request)
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            Post.objects.create(
-                text = data['text'],
-                cowsay_type = data['cowsay_type']
-            )
-            # get_cookie(request)
-            form = PostForm()
-            result = pick_cowsay(request)
-            results = result.stdout.decode()
-            return render(request, 'index.html', {
-                'results': results,
-                'form': form})
-                
-    get_cookie(request)
-    form = PostForm()
-    return render(request, 'index.html', {
-        'form': form,
-        })
+    showcookie(request)
+    show = request.COOKIES['visits']
+    try:
+        value = request.COOKIES['cookie_name']
+    except KeyError:
+        # cookie is not set
+        if request.method == 'POST':
+            form = PostForm(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                Post.objects.create(
+                    text = data['text'],
+                    cowsay_type = data['cowsay_type']
+                )
+                form = PostForm()
+                result = pick_cowsay(request)
+                setcookie(request)
+                results = result.stdout.decode()
+                response = HttpResponse('blah')
+                return render(request, 'index.html', {
+                        'results': results,
+                        'form': form,
+                        })
+
+        form = PostForm()
+        return render(request, 'index.html', {
+            'form': form,
+            'show': show,
+            })
