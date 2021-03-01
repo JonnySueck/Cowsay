@@ -40,15 +40,16 @@ def pick_cowsay(request):
 
 
 def setcookie(request):
+    last_post = Post.objects.last()
     html = HttpResponse("<h1>Dataflair Django Tutorial</h1>")
     if request.COOKIES.get('visits'):
         html.set_cookie('dataflair', 'Welcome Back')
-        value = int(request.COOKIES.get('visits'))
-        html.set_cookie('visits', value + 1)
+        value = request.COOKIES.get('visits')
+        html.set_cookie('visits', last_post)
     else:
-        value = 1
+        value = 'welcome'
         text = "Welcome for the first time"
-        html.set_cookie('visits', value)
+        html.set_cookie('visits', text)
         html.set_cookie('dataflair', text)
     return html
 
@@ -58,16 +59,20 @@ def showcookie(request):
         value = request.COOKIES.get('visits')
         text = request.COOKIES.get('dataflair')
         html = HttpResponse("<center><h1>{0}<br>You have requested this page {1} times</h1></center>".format(text, value))
-        html.set_cookie('visits', int(value) + 1)
+        html.set_cookie('visits', value)
         return html
     else:
-        return redirect('/setcookie')
+        return redirect('/setcookie/')
 
 
 def index_view(request):
     form = PostForm()
     showcookie(request)
-    show = request.COOKIES['visits']
+    if request.COOKIES['visits'] != None:
+        show = request.COOKIES['visits']
+        shows = subprocess.run(['cowsay', f'{ show }'], capture_output=True)
+        results = shows.stdout.decode()
+
     try:
         value = request.COOKIES['cookie_name']
     except KeyError:
@@ -82,9 +87,11 @@ def index_view(request):
                 )
                 form = PostForm()
                 result = pick_cowsay(request)
+                text = data['text']
                 setcookie(request)
                 results = result.stdout.decode()
                 response = HttpResponse('blah')
+                response.set_cookie('visits', f'{results}')
                 return render(request, 'index.html', {
                         'results': results,
                         'form': form,
@@ -93,5 +100,5 @@ def index_view(request):
         form = PostForm()
         return render(request, 'index.html', {
             'form': form,
-            'show': show,
+            'show': results,
             })
