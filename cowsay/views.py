@@ -44,9 +44,12 @@ def index_view(request):
         cow = subprocess.run(['cowsay', '-f', f'{cowsay_type}',
                              f'{last_post}'], capture_output=True)
         results = cow.stdout.decode()
-        return render(request, 'index.html', {'show': results, 'form': form})
+        message = 'welcome back'
+        return render(request, 'index.html', {
+            'show': results, 'form': form,
+            'welcome': message})
 
-    shows = subprocess.run(['cowsay', 'welcome for the first time'],
+    shows = subprocess.run(['cowsay', 'Welcome!'],
                            capture_output=True)
     result = shows.stdout.decode()
     form = PostForm()
