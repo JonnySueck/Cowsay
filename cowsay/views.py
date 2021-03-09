@@ -18,26 +18,6 @@ def history(request):
     return render(request, 'history.html', {'posts': posts})
 
 
-def pick_cowsay(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            cowsay_type = data['cowsay_type']
-            last_post = data['text']
-            if cowsay_type == 'Default':
-                result = subprocess.run(['cowsay', f'{ last_post }'], capture_output=True)
-            if cowsay_type == 'Tux':
-                result = subprocess.run(['cowsay', '-f', 'tux', f'{ last_post }'], capture_output=True)
-            if cowsay_type == 'Dragon':
-                result = subprocess.run(['cowsay', '-f', 'dragon', f'{ last_post }'], capture_output=True)
-            if cowsay_type == 'Kitty':
-                result = subprocess.run(['cowsay', '-f', 'kitty', f'{ last_post }'], capture_output=True)
-            if cowsay_type == 'Skeleton':
-                result = subprocess.run(['cowsay', '-f', 'skeleton', f'{ last_post }'], capture_output=True)
-            return result
-
-
 def index_view(request):
     if request.method == 'POST':
             form = PostForm(request.POST)
@@ -50,8 +30,6 @@ def index_view(request):
                 text = data['text']
                 cowsay_type = data['cowsay_type']
                 form = PostForm()
-                result = pick_cowsay(request)
-                results = result.stdout.decode()
                 html = HttpResponse("Your post has successfully been submitted <a href='/'>go home</a>")
                 html.set_cookie('lastpost', text)
                 html.set_cookie('cowsay', cowsay_type)
@@ -61,7 +39,6 @@ def index_view(request):
         form = PostForm()
         last_post = request.COOKIES.get('lastpost')
         cowsay_type = request.COOKIES.get('cowsay')
-        result = pick_cowsay(request)
         cow = subprocess.run(['cowsay', '-f', f'{cowsay_type}', f'{last_post}'], capture_output=True)
         results = cow.stdout.decode()
         return render(request, 'index.html', {'show': results, 'form': form})
