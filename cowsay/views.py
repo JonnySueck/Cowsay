@@ -38,34 +38,36 @@ def pick_cowsay(request):
                 result = subprocess.run(['cowsay', '-f', 'kitty', f'{ last_post }'], capture_output=True)
             if cowsay_type == 'Skeleton':
                 result = subprocess.run(['cowsay', '-f', 'skeleton', f'{ last_post }'], capture_output=True)
-            print(result)
+            # print(result)
             return result
 
 
-def setcookie(request):
-    last_post = Post.objects.last()
-    text = last_post.text
-    cowsay_type = last_post.cowsay_type
-    html = HttpResponse(
-        "Your post has successfully been submitted <a href='/'>go home</a>")
-    if request.COOKIES.get('lastpost'):
-        value = request.COOKIES.get('lastpost')
-        html.set_cookie('lastpost', last_post)
-    else:
-        text = "Welcome for the first time"
-        html.set_cookie('lastpost', text)
-    return html
+# def setcookie(request):
+#     last_post = Post.objects.last()
+#     text = last_post.text
+#     cowsay_type = last_post.cowsay_type
+#     html = HttpResponse(
+#         "Your post has successfully been submitted <a href='/'>go home</a>")
+#     if request.COOKIES.get('lastpost'):
+#         value = request.COOKIES.get('lastpost')
+#         html.set_cookie('lastpost', last_post)
+#         html.set_cookie('cowsay', cowsay_type)
+#     else:
+#         text = "Welcome for the first time"
+#         html.set_cookie('lastpost', text)
+#     return html
 
 
-def showcookie(request):
-    if request.COOKIES.get('lastpost') is not None:
-        value = request.COOKIES.get('lastpost')
-        text = request.COOKIES.get('dataflair')
-        html = HttpResponse("<center><h1>{0}<br>You have requested this page {1} times</h1></center>".format(text, value))
-        html.set_cookie('lastpost', value)
-        return html
-    else:
-        return HttpResponseRedirect('/setcookie/')
+# def showcookie(request):
+#     if request.COOKIES.get('lastpost') is not None:
+#         value = request.COOKIES.get('lastpost')
+#         print(value)
+#         text = request.COOKIES.get('dataflair')
+#         html = HttpResponse("<center><h1>{0}<br>You have requested this page {1} times</h1></center>".format(text, value))
+#         html.set_cookie('lastpost', value)
+#         return html
+#     else:
+#         return HttpResponseRedirect('/setcookie/')
 
 
 
@@ -80,29 +82,32 @@ def index_view(request):
                 )
                 form = PostForm()
                 result = pick_cowsay(request)
-                setcookie(request)
+                # setcookie('result', result)
                 results = result.stdout.decode()
-                response = HttpResponse('blah')
-                response.set_cookie('lastpost', f'{results}')
-                return HttpResponseRedirect('/setcookie/')
+                # response = HttpResponse('blah')
+                # response.set_cookie('lastpost', f'{results}')
+                return render(request, 'index.html', {'results': results, 'form': form})
     form = PostForm()
-    showcookie(request)
+    return render(request, 'index.html', {'form': form})
+    # showcookie(request)
 
 
-    if request.COOKIES.get('lastpost'):
-        show = request.COOKIES.get('lastpost')
-        print(show)
-        shows = subprocess.run(['cowsay', f'{ show }'], capture_output=True)
-        results = shows.stdout.decode()
-    else:
-        shows = subprocess.run(['cowsay', f'welcome for the first time'], capture_output=True)
-        results = shows.stdout.decode()
+    # if request.COOKIES.get('lastpost'):
+    #     last_post = request.COOKIES.get('lastpost')
+    #     cow = request.COOKIES.get('cowsay')
+    #     setcookie(request)
+    #     # results = last_post.stdout.decode()
+    #     response = HttpResponse('blah')
+    #     response.set_cookie('lastpost', f'{last_post}')
+    # else:
+    #     shows = subprocess.run(['cowsay', f'welcome for the first time'], capture_output=True)
+    #     results = shows.stdout.decode()
 
-    form = PostForm()
-    return render(request, 'index.html', {
-        'form': form,
-        'show': results,
-        })
+    # form = PostForm()
+    # return render(request, 'index.html', {
+    #     'form': form,
+    #     'show': cow,
+    #     })
 
     
 
