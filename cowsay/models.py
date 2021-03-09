@@ -1,5 +1,5 @@
-from django.conf import settings
 from django.db import models
+
 
 # Create your models here.
 class Post(models.Model):
@@ -20,6 +20,6 @@ class Post(models.Model):
         max_length=11,
         choices=STATUS_CHOICES,
         default=DEFAULT,)
-    
+
     def __str__(self):
         return self.text
