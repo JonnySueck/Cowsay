@@ -16,12 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from cowsay.views import index_view, history
-#  setcookie, showcookie
 
 urlpatterns = [
     path('', index_view,  name='home'),
     path('history/', history, name='history'),
-    # path('setcookie/', setcookie, name='setcookie'),
-    # path('getcookie/', showcookie, name='getcookie'),
     path('admin/', admin.site.urls)
 ]
