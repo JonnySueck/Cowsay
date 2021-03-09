@@ -6,6 +6,8 @@ from .forms import PostForm
 from django.shortcuts import HttpResponseRedirect, render
 import subprocess
 
+## todo, set cookie as a tuple or dictionary to reference for cowtype
+
 # Create your views here.
 def history(request):
     posts = Post.objects.all()
@@ -36,11 +38,14 @@ def pick_cowsay(request):
                 result = subprocess.run(['cowsay', '-f', 'kitty', f'{ last_post }'], capture_output=True)
             if cowsay_type == 'Skeleton':
                 result = subprocess.run(['cowsay', '-f', 'skeleton', f'{ last_post }'], capture_output=True)
+            print(result)
             return result
 
 
 def setcookie(request):
     last_post = Post.objects.last()
+    text = last_post.text
+    cowsay_type = last_post.cowsay_type
     html = HttpResponse(
         "Your post has successfully been submitted <a href='/'>go home</a>")
     if request.COOKIES.get('lastpost'):
@@ -65,18 +70,7 @@ def showcookie(request):
 
 
 def index_view(request):
-    form = PostForm()
-    showcookie(request)
-    if request.COOKIES['lastpost'] != None:
-        show = request.COOKIES['lastpost']
-        shows = subprocess.run(['cowsay', f'{ show }'], capture_output=True)
-        results = shows.stdout.decode()
-
-    try:
-        value = request.COOKIES['cookie_name']
-    except KeyError:
-        # cookie is not set
-        if request.method == 'POST':
+    if request.method == 'POST':
             form = PostForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data
@@ -91,9 +85,24 @@ def index_view(request):
                 response = HttpResponse('blah')
                 response.set_cookie('lastpost', f'{results}')
                 return HttpResponseRedirect('/setcookie/')
+    form = PostForm()
+    showcookie(request)
 
-        form = PostForm()
-        return render(request, 'index.html', {
-            'form': form,
-            'show': results,
-            })
+
+    if request.COOKIES.get('lastpost'):
+        show = request.COOKIES.get('lastpost')
+        print(show)
+        shows = subprocess.run(['cowsay', f'{ show }'], capture_output=True)
+        results = shows.stdout.decode()
+    else:
+        shows = subprocess.run(['cowsay', f'welcome for the first time'], capture_output=True)
+        results = shows.stdout.decode()
+
+    form = PostForm()
+    return render(request, 'index.html', {
+        'form': form,
+        'show': results,
+        })
+
+    
+
