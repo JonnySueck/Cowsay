@@ -2,6 +2,9 @@
 
 {% block content %}
 <h1>most recent posts:</h1>
+<pre>
+{{results}}
+</pre>
 {% for item in posts %}
 <li>"{{ item }}" - cow type: {{ item.cowsay_type }}</li>
 
