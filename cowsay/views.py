@@ -15,12 +15,7 @@ def history(request):
     else:
         start = 0
     posts = Post.objects.all()[start:last]
-    last_post = request.COOKIES.get('lastpost')
-    cowsay_type = request.COOKIES.get('cowsay')
-    cow = subprocess.run(['cowsay', '-f', f'{cowsay_type}',
-                         f'{last_post}'], capture_output=True)
-    results = cow.stdout.decode()
-    return render(request, 'history.html', {'posts': posts, 'results': results})
+    return render(request, 'history.html', {'posts': posts})
 
 
 def index_view(request):
