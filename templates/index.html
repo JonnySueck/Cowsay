@@ -1,18 +1,18 @@
 {% extends 'nav/base.html' %}
-<pre>
+{% load bootstrap4 %}
 {% block content %}
+<br>
 <p>{{ welcome }}</p>
+<pre>
+    {{ show }}
+</pre>
 <h3>Create a new post</h3>
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="submit">
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button type="submit" class="btn btn-dark">Log In</button>
+    {% endbuttons %}
     
 </form>
-<pre>
-    {{ results }}
-    {{ show }}
-    {{ cow }}
-</pre>
 {% endblock %}
-</pre>

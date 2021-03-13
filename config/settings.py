@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cowsay'
+    'cowsay',
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [
