@@ -10,12 +10,24 @@ def history(request):
     posts = Post.objects.all()
     number_of_posts = len(posts)
     last = number_of_posts
+    first = 1
+    if number_of_posts > 10:
+        first = number_of_posts - 10
+    post = Post.objects.get(id=first)
+    cowsay_type = post.cowsay_type
+    message = post.text
+    cow = subprocess.run(['cowsay', '-f', f'{cowsay_type}',
+                          f'{message}'], capture_output=True)
+    results = cow.stdout.decode()
     if number_of_posts > 10:
         start = number_of_posts - 10
     else:
         start = 0
     posts = Post.objects.all()[start:last]
-    return render(request, 'history.html', {'posts': posts})
+    return render(request, 'history.html', {
+        'posts': posts,
+        'results': results
+        })
 
 
 def index_view(request):
@@ -44,7 +56,7 @@ def index_view(request):
         cow = subprocess.run(['cowsay', '-f', f'{cowsay_type}',
                              f'{last_post}'], capture_output=True)
         results = cow.stdout.decode()
-        message = 'welcome back'
+        message = 'welcome back to cowsay'
         return render(request, 'index.html', {
             'show': results, 'form': form,
             'welcome': message})
