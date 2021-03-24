@@ -2,16 +2,18 @@
 {% load bootstrap4 %}
 {% block content %}
 <br>
-<p>{{ welcome }}</p>
+<h3 class="text-center">{{ welcome }}</h3>
+<div id="message">
 <pre>
-    {{ show }}
+{{ show }}
 </pre>
-<h3>Create a new post</h3>
+</div>
+<h5>Create a new post</h5>
 <form method="POST">
     {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}
-        <button type="submit" class="btn btn-dark">Log In</button>
+        <button type="submit" class="btn btn-dark">Submit</button>
     {% endbuttons %}
     
 </form>
